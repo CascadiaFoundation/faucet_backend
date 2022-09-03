@@ -1,5 +1,5 @@
-const Faucet = require('./faucet.model');
+const Faucet = require("./faucet.model");
 
 module.exports = {
-    Faucet
+    Faucet,
 };
