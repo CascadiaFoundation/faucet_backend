@@ -34,17 +34,17 @@ const getFaucet = async (req, res) => {
                     Last sent: ${existingItem.updatedAt}`
                 );
             }
+        } else {
+            await sendFaucetRequest(req.body.address);
+
+            const faucetItem = new Faucet();
+            faucetItem.address = req.body.address;
+            faucetItem.ip =
+                req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+            await faucetItem.save();
+
+            res.send("Request has been sent.");
         }
-
-        await sendFaucetRequest(req.body.address);
-
-        const faucetItem = new Faucet();
-        faucetItem.address = req.body.address;
-        faucetItem.ip =
-            req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-        await faucetItem.save();
-
-        res.send("Request has been sent.");
     } catch (err) {
         res.status(500).send(err);
     }
