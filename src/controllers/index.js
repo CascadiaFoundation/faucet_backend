@@ -2,10 +2,19 @@ const { Faucet } = require("../model");
 
 const getFaucet = async (req, res) => {
     try {
-        const isExist = await Faucet.findOne({ address: req.body.address });
+        const existingItem = await Faucet.findOne({
+            address: req.body.address,
+        });
 
-        if (isExist) {
-            return res.status(400).send("Address already exists.");
+        if (existingItem) {
+            const current = new Date();
+            if (Math.abs(existingItem.createdAt - current) / 3600000 > 1) {
+                return res.send("Request has been sent.");
+            } else {
+                return res
+                    .status(400)
+                    .send("Your request has been sent within 1 hour.");
+            }
         }
 
         const faucetItem = new Faucet();
@@ -15,7 +24,7 @@ const getFaucet = async (req, res) => {
         await faucetItem.save();
         res.send();
     } catch (err) {
-        res.status(500).send("Server error.");
+        res.status(500).send(err);
     }
 };
 
