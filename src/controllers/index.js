@@ -9,6 +9,7 @@ const getFaucet = async (req, res) => {
         if (existingItem) {
             const current = new Date();
             if (Math.abs(existingItem.createdAt - current) / 3600000 > 1) {
+                // TODO: Should send request for faucet
                 return res.send("Request has been sent.");
             } else {
                 return res
