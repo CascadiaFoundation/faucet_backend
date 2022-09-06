@@ -5,7 +5,7 @@ const sendFaucetRequest = async (address) => {
     const res = await shell.exec(`${process.env.SHELL_SCRIPT} ${address}`);
 
     if (res.stderr) {
-        throw "Invalid shell script.";
+        throw "Request error.";
     }
 
     return;

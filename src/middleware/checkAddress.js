@@ -5,10 +5,12 @@ const checkAddress = (req, res, next) => {
         if (web3.utils.isAddress(req.body.address)) {
             next();
         } else {
-            return res.status(400).send("Invalid Address");
+            return res
+                .status(400)
+                .send("Your address is invalid. Please check it again.");
         }
     } else {
-        return res.status(400).send("No Address was found.");
+        return res.status(400).send("Address to be sent is needed.");
     }
 };
 

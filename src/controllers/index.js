@@ -4,9 +4,8 @@ const { requestTimeGap } = require("../config");
 
 const getFaucet = async (req, res) => {
     try {
-        const existingItem = await Faucet.findOne({
-            address: req.body.address,
-        });
+        const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+        const existingItem = await Faucet.findOne({ ip });
 
         if (existingItem) {
             const current = new Date();
@@ -17,33 +16,29 @@ const getFaucet = async (req, res) => {
                 await sendFaucetRequest(req.body.address);
 
                 await Faucet.updateOne(
+                    { ip },
                     {
                         address: req.body.address,
-                    },
-                    {
-                        ip:
-                            req.headers["x-forwarded-for"] ||
-                            req.socket.remoteAddress,
                     }
                 );
 
-                return res.send("Request has been sent.");
+                return res.send("Test coin has been achieved.");
             } else {
                 return res.status(400).send(
-                    `You can't resend a request within 1 hours after your last request.
-                    Last sent: ${existingItem.updatedAt}`
+                    `You can't send more than one request from one ip address within ${requestTimeGap} hour(s).
+                    Time for last request: ${existingItem.updatedAt}
+                    IP Address: ${ip}`
                 );
             }
         } else {
             await sendFaucetRequest(req.body.address);
 
             const faucetItem = new Faucet();
+            faucetItem.ip = ip;
             faucetItem.address = req.body.address;
-            faucetItem.ip =
-                req.headers["x-forwarded-for"] || req.socket.remoteAddress;
             await faucetItem.save();
 
-            res.send("Request has been sent.");
+            res.send("Test coin has been achieved.");
         }
     } catch (err) {
         res.status(500).send(err);
