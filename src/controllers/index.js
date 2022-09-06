@@ -22,11 +22,12 @@ const getFaucet = async (req, res) => {
                     }
                 );
 
-                return res.send("Request has been sent.");
+                return res.send("Test coin has been achieved.");
             } else {
                 return res.status(400).send(
-                    `You can't resend a request within 1 hours after your last request.
-                    Last sent: ${existingItem.updatedAt}`
+                    `You can't send more than one request from one ip address within ${requestTimeGap} hour(s).
+                    Time for last request: ${existingItem.updatedAt}
+                    IP Address: ${ip}`
                 );
             }
         } else {
@@ -37,7 +38,7 @@ const getFaucet = async (req, res) => {
             faucetItem.address = req.body.address;
             await faucetItem.save();
 
-            res.send("Request has been sent.");
+            res.send("Test coin has been achieved.");
         }
     } catch (err) {
         res.status(500).send(err);
