@@ -4,9 +4,8 @@ const { requestTimeGap } = require("../config");
 
 const getFaucet = async (req, res) => {
     try {
-        const existingItem = await Faucet.findOne({
-            address: req.body.address,
-        });
+        const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+        const existingItem = await Faucet.findOne({ ip });
 
         if (existingItem) {
             const current = new Date();
@@ -17,13 +16,9 @@ const getFaucet = async (req, res) => {
                 await sendFaucetRequest(req.body.address);
 
                 await Faucet.updateOne(
+                    { ip },
                     {
                         address: req.body.address,
-                    },
-                    {
-                        ip:
-                            req.headers["x-forwarded-for"] ||
-                            req.socket.remoteAddress,
                     }
                 );
 
@@ -38,9 +33,8 @@ const getFaucet = async (req, res) => {
             await sendFaucetRequest(req.body.address);
 
             const faucetItem = new Faucet();
+            faucetItem.ip = ip;
             faucetItem.address = req.body.address;
-            faucetItem.ip =
-                req.headers["x-forwarded-for"] || req.socket.remoteAddress;
             await faucetItem.save();
 
             res.send("Request has been sent.");
