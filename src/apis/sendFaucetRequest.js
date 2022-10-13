@@ -22,7 +22,6 @@ const sendFaucetRequest = (address) => {
                 resolve(receipt);
             });
             sentTx.on("error", err => {
-                console.log("Err:", err);
                 reject(err);
             });
         })        
