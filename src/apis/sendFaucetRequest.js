@@ -4,8 +4,10 @@ const config = require("../config");
 const sendFaucetRequest = (address) => {
     const web3 = new Web3(config.rpcUrl);
 
+    const faucetAddress = web3.eth.accounts.privateKeyToAccount(config.faucetPK).address;
+
     const tx = {
-        from: sender,
+        from: faucetAddress,
         to: address,
         gas: 21000,
         value: config.faucetAmount
@@ -17,7 +19,6 @@ const sendFaucetRequest = (address) => {
         signPromise.then((signedTx) => {
             const sentTx = web3.eth.sendSignedTransaction(signedTx.raw || signedTx.rawTransaction);
             sentTx.on("receipt", receipt => {
-                console.log("Sent to", receipt);
                 resolve(receipt);
             });
             sentTx.on("error", err => {
