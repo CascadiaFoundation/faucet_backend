@@ -1,6 +1,8 @@
+require("dotenv").config()
+
 const config = {
-    port: 3000,
-    requestTimeGap: 1,
+    port: process.env.PORT || 3000,
+    limitDuration: process.env.LIMIT_DURATION || 3000,
 };
 
 module.exports = config;
