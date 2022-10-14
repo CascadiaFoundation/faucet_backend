@@ -1,14 +1,34 @@
-require("dotenv").config();
-const shell = require("shelljs");
+const Web3 = require("web3");
+const config = require("../config");
 
-const sendFaucetRequest = async (address) => {
-    const res = await shell.exec(`${process.env.SHELL_SCRIPT} ${address}`);
+const sendFaucetRequest = (address) => {
+    const web3 = new Web3(config.rpcUrl);
 
-    if (res.stderr) {
-        throw "Request error.";
-    }
+    const faucetAddress = web3.eth.accounts.privateKeyToAccount(config.faucetPK).address;
 
-    return;
+    const tx = {
+        from: faucetAddress,
+        to: address,
+        gas: 21000,
+        value: config.faucetAmount
+    };
+
+    const signPromise = web3.eth.accounts.signTransaction(tx, config.faucetPK);
+    
+    const promise = new Promise((resolve, reject) => {        
+        signPromise.then((signedTx) => {
+            const sentTx = web3.eth.sendSignedTransaction(signedTx.raw || signedTx.rawTransaction);
+            sentTx.on("receipt", receipt => {
+                resolve(receipt);
+            });
+            sentTx.on("error", err => {
+                console.log("Err:", err);
+                reject(err);
+            });
+        })        
+    })
+    
+    return promise;
 };
 
 module.exports = sendFaucetRequest;
