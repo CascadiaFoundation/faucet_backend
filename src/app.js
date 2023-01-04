@@ -5,6 +5,8 @@ const router = require("./routes");
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.options("*", cors());
