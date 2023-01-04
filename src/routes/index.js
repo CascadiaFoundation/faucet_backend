@@ -17,4 +17,7 @@ const limiter = rateLimit({
 router.post("/get-faucet", [checkAddress, limiter], getFaucet);
 router.post("/add-response", addResponse);
 
+router.get('/ip', (request, response) => response.send(request.ip))
+
+router.set()
 module.exports = router;
