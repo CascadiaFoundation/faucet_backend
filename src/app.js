@@ -11,6 +11,6 @@ app.use(cors());
 app.options("*", cors());
 
 app.use("/api", router);
-app.set('trust proxy', 3);
+app.set('trust proxy', 2);
 
 module.exports = app;

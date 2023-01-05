@@ -5,7 +5,7 @@ const getFaucet = async (req, res) => {
         sendFaucetRequest(req.body.address).then((res) =>{
             // console.log(res);
         });
-        res.send("Test coin has been achieved.");
+        res.send("Received test coins successfully.");
     } catch (err) {
         res.status(500).send(err);
     }
